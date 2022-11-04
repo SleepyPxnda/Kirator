@@ -1,6 +1,9 @@
 const { REST, Routes } = require('discord.js');
 const fs = require("fs");
 
+const logCommand = require("./commands/log")
+const signUpCommand = require("./commands/signup")
+
 const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
@@ -10,16 +13,10 @@ if(TOKEN === undefined || CLIENT_ID === undefined || GUILD_ID === undefined){
     return
 }
 
-const commands = [];
-// Grab all the command files from the commands directory you created earlier
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    commands.push(command.data.toJSON());
-}
-
+const commands = [
+                    logCommand.command.toJSON(),
+                    signUpCommand.command.toJSON()
+                ];
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: '10' }).setToken(TOKEN);
 
@@ -39,4 +36,7 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
         // And of course, make sure you catch and log any errors!
         console.error(error);
     }
+
+    const data = await rest.get(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID))
+    console.log(data)
 })();
