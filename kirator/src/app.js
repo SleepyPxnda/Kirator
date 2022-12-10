@@ -25,16 +25,25 @@ client.on(Events.InteractionCreate, async interaction => {
         case "log":
             command = require("./commands/log");
             break;
-        case "signup":
-            command = require("./commands/signup");
-            break;
     }
 
     try {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: true });
+    }
+});
+
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isSelectMenu()) return;
+    let select = null;
+
+    try {
+        await select.selectInteraction(interaction);
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this select menu!', ephemeral: true });
     }
 });
 

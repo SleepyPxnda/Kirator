@@ -2,7 +2,6 @@ const { REST, Routes } = require('discord.js');
 const fs = require("fs");
 
 const logCommand = require("./commands/log")
-const signUpCommand = require("./commands/signup")
 
 const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -14,8 +13,7 @@ if(TOKEN === undefined || CLIENT_ID === undefined || GUILD_ID === undefined){
 }
 
 const commands = [
-                    logCommand.command.toJSON(),
-                    signUpCommand.command.toJSON()
+                    logCommand.command.toJSON()
                 ];
 // Construct and prepare an instance of the REST module
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -38,5 +36,5 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
     }
 
     const data = await rest.get(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID))
-    console.log(data)
+    console.log("Result:", data)
 })();
