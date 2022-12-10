@@ -26,6 +26,8 @@ module.exports = {
 
         const data = await wlUtil.getDataForLog(wlCode)
 
+        //console.log(JSON.stringify(data))
+
         const parsedData = wlParseUtil.parseWarcraftLogsResponseToJson(data);
         //console.log(JSON.stringify(parsedData))
 

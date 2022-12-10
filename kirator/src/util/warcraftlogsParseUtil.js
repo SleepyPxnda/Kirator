@@ -24,16 +24,21 @@ function getDpsParseList(dpsParses) {
                     class: char.class,
                     spec: char.spec,
                     participatedFights: 1,
-                    dpsComputedPercentage: char.bracketPercent
+                    dpsComputedPercentage: char.bracketPercent,
+                    overallDps: char.amount
                 })
             } else {
                 charInDpsList.participatedFights += 1;
-                charInDpsList.dpsComputedPercentage += char.bracketPercent
+                charInDpsList.dpsComputedPercentage += char.bracketPercent;
+                charInDpsList.overallDps += char.amount;
             }
         })
     })
 
-    dpsList.forEach(dps => dps.dpsComputedPercentage = Math.round(dps.dpsComputedPercentage / dps.participatedFights));
+    dpsList.forEach(dps => {
+        dps.dpsComputedPercentage = Math.round(dps.dpsComputedPercentage / dps.participatedFights)
+        dps.overallDps = Math.round(dps.overallDps / dps.participatedFights);
+    });
 
     return dpsList;
 }
@@ -50,16 +55,21 @@ function getHealerParseList(hpsParses) {
                     class: char.class,
                     spec: char.spec,
                     participatedFights: 1,
-                    hpsComputedPercentage: char.bracketPercent
+                    hpsComputedPercentage: char.bracketPercent,
+                    overallHps: char.amount
                 })
             } else {
                 healerInHpsList.participatedFights += 1;
-                healerInHpsList.hpsComputedPercentage += char.bracketPercent
+                healerInHpsList.hpsComputedPercentage += char.bracketPercent;
+                healerInHpsList.overallHps += char.amount;
             }
         })
     })
 
-    healerList.forEach(healer => healer.hpsComputedPercentage = Math.round(healer.hpsComputedPercentage / healer.participatedFights));
+    healerList.forEach(healer => {
+        healer.hpsComputedPercentage = Math.round(healer.hpsComputedPercentage / healer.participatedFights);
+        healer.overallHps = Math.round(healer.overallHps / healer.participatedFights);
+    });
 
     return healerList;
 }

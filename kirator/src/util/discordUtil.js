@@ -54,6 +54,14 @@ function getEmbedValueStringForFight(fight){
         return "✅"
     }
 }
+function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
 
 function getIconForParseScore(score){
     switch (true){
@@ -91,7 +99,20 @@ module.exports = {
             {name: "**KILL**", value: raidData.fights.map(getEmbedValueStringForFight).join("\n"), inline: true}
         )
 
+        let dpsArrays = sliceIntoChunks(raidData.parses.dps.sort((a,b) => b.overallDps - a.overallDps), 5);
+
         embed.addFields(
+            {
+                name: "(Ov.DPS) DPS", value: dpsArrays[0]
+                    .map(dps =>
+                        (dps.overallDps / 1000).toFixed(1)
+                        + "k -"
+                        + getIconForParseScore(dps.dpsComputedPercentage)
+                        + " "
+                        + getIconForClass(dps.class)
+                        + " "
+                        + dps.name).join("\n"), inline: true
+            },
             {
                 name: "(DPS/HPS) Tanks", value: raidData.parses.tanks
                     .sort((a,b) => b.dpsComputedPercentage - a.dpsComputedPercentage)
@@ -106,25 +127,34 @@ module.exports = {
             },
             {
                 name: "(HPS) Healers", value: raidData.parses.healer
-                    .sort((a,b) => b.hpsComputedPercentage - a.hpsComputedPercentage)
+                    .sort((a,b) => b.overallHps - a.overallHps)
                     .map(healer =>
-                        getIconForParseScore(healer.hpsComputedPercentage)
+                        (healer.overallHps / 1000).toFixed(1)
+                        + "k -"
+                        + getIconForParseScore(healer.hpsComputedPercentage)
                         + " "
                         + getIconForClass(healer.class)
                         + " "
                         + healer.name).join("\n"), inline: true
-            },
-            {
-                name: "(DPS) DPS", value: raidData.parses.dps
-                    .sort((a,b) => b.dpsComputedPercentage - a.dpsComputedPercentage)
-                    .map(dps =>
-                        getIconForParseScore(dps.dpsComputedPercentage)
-                        + " "
-                        + getIconForClass(dps.class)
-                        + " "
-                        + dps.name).join("\n"), inline: true
             }
         );
+
+        if(dpsArrays.length > 1){
+            for(let i = 1; i < dpsArrays.length; i++){
+                embed.addFields(
+                    {
+                        name: "(Ov.DPS) DPS " + (i + 1), value: dpsArrays[i]
+                            .map(dps =>
+                                (dps.overallDps / 1000).toFixed(1)
+                                + "k -"
+                                + getIconForParseScore(dps.dpsComputedPercentage)
+                                + " "
+                                + getIconForClass(dps.class)
+                                + " "
+                                + dps.name).join("\n"), inline: false
+                    });
+            }
+        }
 
         return embed;
     }
