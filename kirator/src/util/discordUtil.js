@@ -79,6 +79,7 @@ module.exports = {
             .setTitle(raidData.general.title + " | " + raidData.general.duration)
             .setTimestamp()
             .setAuthor({name: "<RI> Raid Log"})
+            .setFooter({ text: raidData.general.code})
 
         embed.addFields(
             {

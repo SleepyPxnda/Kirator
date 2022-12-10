@@ -21,7 +21,10 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
-        const data = await wlUtil.getDataForLog("Ktz4mT9g8XaZF6bn")
+        const wlLink = interaction.options.getString("warcraft_logs_link")
+        const wlCode = wlLink.split("/")[4]
+
+        const data = await wlUtil.getDataForLog(wlCode)
 
         const parsedData = wlParseUtil.parseWarcraftLogsResponseToJson(data);
         //console.log(JSON.stringify(parsedData))

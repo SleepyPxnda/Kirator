@@ -42,8 +42,8 @@ module.exports = {
         )
 
         if(response.status === 401){
-            await refreshToken();
             console.log("Status was 401 Unauthorized")
+            await refreshToken();
             response = await fetch(graph_url, {
                     method: 'POST',
                     headers: {
