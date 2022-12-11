@@ -3,7 +3,8 @@ const token_url = "https://www.warcraftlogs.com/oauth/token";
 const graph_url = "https://www.warcraftlogs.com/api/v2/client"
 let expiryDate = 0;
 
-const query = require("../graphql/schema").query;
+const raidQuery = require("../graphql/raidSchema").query;
+const mythicQuery = require("../graphql/mythicPlusSchema").query;
 
 async function refreshToken() {
     const WL_CLIENT_ID = process.env.WL_CLIENT_ID;
@@ -24,8 +25,9 @@ async function refreshToken() {
 }
 
 module.exports = {
-    async getDataForLog(logId){
+    async getDataForLog(logId, isRaid){
         const report = logId;
+        let query = isRaid ? raidQuery : mythicQuery;
 
         let response = await fetch(graph_url, {
                 method: 'POST',

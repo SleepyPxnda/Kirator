@@ -157,5 +157,8 @@ module.exports = {
         }
 
         return embed;
+    },
+    createEmbedFromMythicPlusData(mythicData){
+
     }
 }
