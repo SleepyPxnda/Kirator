@@ -1,16 +1,4 @@
-function getRaidDuration(startUnix, endUnix) {
-    const difference = Math.abs(endUnix - startUnix);
-
-    let seconds = Math.floor((difference / 1000) % 60),
-        minutes = Math.floor((difference / (1000 * 60)) % 60),
-        hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-    return hours + ":" + minutes + ":" + seconds;
-}
+const utils = require("../util/util")
 function getDpsParseList(dpsParses) {
     let dpsList = [];
 
@@ -153,13 +141,11 @@ module.exports = {
           fights: {}
       };
 
-      let errors = [];
-
       const report = json.data.reportData.report;
 
       //general information
       result.general.title = report.title;
-      result.general.duration = getRaidDuration(report.startTime, report.endTime);
+      result.general.duration = utils.getDurationFromUnix(report.startTime, report.endTime);
       result.general.code = report.code;
 
       //parses for different roles

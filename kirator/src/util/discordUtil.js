@@ -159,6 +159,19 @@ module.exports = {
         return embed;
     },
     createEmbedFromMythicPlusData(mythicData){
+        let embed = new EmbedBuilder()
+            .setColor(getColorFromDifficulty("diff_mythic"))
+            .setTitle(mythicData.general.title + " | " + mythicData.general.duration)
+            .setTimestamp()
+            .setAuthor({name: "<RI> Mythic+ Log"})
+            .setFooter({ text: mythicData.general.code})
 
+        embed.addFields({name: "Dungeon", value: mythicData.summary.dungeonName, inline: true},
+            {name: "Level", value: mythicData.summary.keyLevel.toString(), inline: true},
+            {name: "Upgrade", value: "+ " + mythicData.summary.keyUpgrade, inline: true});
+
+        embed.addFields({name: "Group", value: mythicData.summary.players.map(x => getIconForClass(x.subType)  + " " + x.name ).join("\n"), inline: false})
+
+        return embed;
     }
 }
