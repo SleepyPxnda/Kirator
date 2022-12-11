@@ -172,6 +172,8 @@ module.exports = {
 
         embed.addFields({name: "Group", value: mythicData.summary.players.map(x => getIconForClass(x.subType)  + " " + x.name ).join("\n"), inline: false})
 
+        //Add Links to helpful websites
+
         return embed;
     }
 }
