@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const wlUtil = require("../util/warcraftlogsRequestUtil")
-const wlParseUtil = require("../util/warcraftlogsParseUtil");
+const wlRaidParseUtil = require("../util/warcraftlogsRaidParseUtil");
 const discordUtil = require("../util/discordUtil")
 
 module.exports = {
@@ -24,12 +24,9 @@ module.exports = {
         const wlLink = interaction.options.getString("warcraft_logs_link")
         const wlCode = wlLink.split("/")[4]
 
-        const data = await wlUtil.getDataForLog(wlCode)
+        const data = await wlUtil.getDataForLog(wlCode, true)
 
-        //console.log(JSON.stringify(data))
-
-        const parsedData = wlParseUtil.parseWarcraftLogsResponseToJson(data);
-        //console.log(JSON.stringify(parsedData))
+        const parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
 
         const embed = discordUtil.createEmbedFromRaidData(parsedData, interaction.options.getString('difficulty'))
 
