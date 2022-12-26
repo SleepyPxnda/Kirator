@@ -6,7 +6,7 @@ module.exports = {
                 startTime
                 endTime
                 code
-                fights {
+                fights (killType: Encounters) {
                     difficulty
                     encounterID
                     averageItemLevel

@@ -1,7 +1,6 @@
 let bearer = "";
 const token_url = "https://www.warcraftlogs.com/oauth/token";
 const graph_url = "https://www.warcraftlogs.com/api/v2/client"
-let expiryDate = 0;
 
 const raidQuery = require("../graphql/raidSchema").query;
 const mythicQuery = require("../graphql/mythicPlusSchema").query;
@@ -60,7 +59,6 @@ module.exports = {
                 }
             )
         }
-
         return response.json();
     }
 }

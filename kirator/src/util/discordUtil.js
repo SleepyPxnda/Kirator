@@ -156,9 +156,27 @@ module.exports = {
             }
         }
 
+        //Add Links to helpful websites
+        embed.addFields({name: "Useful links", value: "https://www.warcraftlogs.com/reports/" + raidData.general.code + " \n"
+                + "https://www.wipefest.gg/report/" + raidData.general.code + " \n"
+                + "https://wowanalyzer.com/report/" + raidData.general.code + " \n", inline: false})
+
         return embed;
     },
     createEmbedFromMythicPlusData(mythicData){
+        let embed = new EmbedBuilder()
+            .setColor(getColorFromDifficulty("diff_mythic"))
+            .setTitle(mythicData.general.title + " | " + mythicData.general.duration)
+            .setTimestamp()
+            .setAuthor({name: "<RI> Mythic+ Log"})
+            .setFooter({ text: mythicData.general.code})
 
+        embed.addFields({name: "Dungeon", value: mythicData.summary.dungeonName, inline: true},
+            {name: "Level", value: mythicData.summary.keyLevel.toString(), inline: true},
+            {name: "Upgrade", value: "+ " + mythicData.summary.keyUpgrade, inline: true});
+
+        embed.addFields({name: "Group", value: mythicData.summary.players.map(x => getIconForClass(x.subType)  + " " + x.name ).join("\n"), inline: false})
+
+        return embed;
     }
 }

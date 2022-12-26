@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const wlUtil = require("../util/warcraftlogsRequestUtil")
-const wlRaidParseUtil = require("../util/warcraftlogsRaidParseUtil");
+const wlUtil = require("../warcraftlogs/warcraftlogsRequestUtil")
+const wlRaidParseUtil = require("../warcraftlogs/warcraftlogsRaidParseUtil");
+const wlMythicParseUtil = require("../warcraftlogs/warcraftlogsMythicPlusParseUtil")
 const discordUtil = require("../util/discordUtil")
 
 module.exports = {
@@ -17,6 +18,14 @@ module.exports = {
                     { name: 'Normal', value: 'diff_normal' },
                     { name: 'Heroic', value: 'diff_heroic' },
                     { name: 'Mythic', value: 'diff_mythic' },
+                ))
+        .addStringOption(option =>
+            option.setName('mode')
+                .setDescription('decide if its a raid or a m+ log')
+                .setRequired(false)
+                .addChoices(
+                    { name: 'Raid', value: 'mode_raid' },
+                    { name: 'Dungeon', value: 'mode_dungeon' }
                 )),
     async execute(interaction) {
         await interaction.deferReply();
@@ -24,11 +33,25 @@ module.exports = {
         const wlLink = interaction.options.getString("warcraft_logs_link")
         const wlCode = wlLink.split("/")[4]
 
-        const data = await wlUtil.getDataForLog(wlCode, true)
+        const difficulty = interaction.options.getString('difficulty');
 
-        const parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
+        const mode = interaction.options.getString("mode")
 
-        const embed = discordUtil.createEmbedFromRaidData(parsedData, interaction.options.getString('difficulty'))
+        let embed;
+
+        if(mode === "mode_dungeon") {
+            const data = await wlUtil.getDataForLog(wlCode, false);
+
+            const parsedData = wlMythicParseUtil.parseWarcraftLogsResponseToJson(data);
+
+            embed = discordUtil.createEmbedFromMythicPlusData(parsedData);
+        } else {
+            const data = await wlUtil.getDataForLog(wlCode, true)
+
+            const parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
+
+            embed = discordUtil.createEmbedFromRaidData(parsedData, difficulty);
+        }
 
         await interaction.editReply({embeds: [embed]})
     },

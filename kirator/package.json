@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
-    "deploycommands": "node src/deployCommands.js"
+    "deploycommands": "node src/util/deployCommands.js"
   },
   "keywords": [],
   "author": "SleepyPxnda",

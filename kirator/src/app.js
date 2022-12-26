@@ -1,12 +1,15 @@
 const { Client, Events, GatewayIntentBits } = require('discord.js');
+const commandManager = require("./util/deployCommands")
 
 const TOKEN = process.env.TOKEN;
-const CLIENT_ID = process.env.CLIENT_ID;
 
-if(TOKEN === undefined || CLIENT_ID === undefined){
-    console.log("ENV Vars 'TOKEN' and 'CLIENT_ID' has to be specified")
-    return
-}
+(async () => {
+    if(process.env.NODE_ENV === "production"){
+        console.log("Redeploying commands ..")
+        await commandManager.deployCommands();
+    }
+})();
+
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
