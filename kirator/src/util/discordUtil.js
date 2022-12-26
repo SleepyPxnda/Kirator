@@ -156,6 +156,11 @@ module.exports = {
             }
         }
 
+        //Add Links to helpful websites
+        embed.addFields({name: "Useful links", value: "https://www.warcraftlogs.com/reports/" + raidData.general.code + " \n"
+                + "https://www.wipefest.gg/report/" + raidData.general.code + " \n"
+                + "https://wowanalyzer.com/report/" + raidData.general.code + " \n", inline: false})
+
         return embed;
     },
     createEmbedFromMythicPlusData(mythicData){
@@ -171,8 +176,6 @@ module.exports = {
             {name: "Upgrade", value: "+ " + mythicData.summary.keyUpgrade, inline: true});
 
         embed.addFields({name: "Group", value: mythicData.summary.players.map(x => getIconForClass(x.subType)  + " " + x.name ).join("\n"), inline: false})
-
-        //Add Links to helpful websites
 
         return embed;
     }
