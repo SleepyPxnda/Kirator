@@ -178,5 +178,59 @@ module.exports = {
         embed.addFields({name: "Group", value: mythicData.summary.players.map(x => getIconForClass(x.subType)  + " " + x.name ).join("\n"), inline: false})
 
         return embed;
+    },
+    createEmbedFromReducedRaidData(raidData, difficulty){
+        let embed = new EmbedBuilder()
+            .setColor(getColorFromDifficulty(difficulty))
+            .setTitle(raidData.general.title + " | " + raidData.general.duration)
+            .setTimestamp()
+            .setAuthor({name: "<RI> Raid Log"})
+            .setFooter({ text: raidData.general.code})
+
+        embed.addFields(
+            {
+                name: "**BOSS**",
+                value: raidData.fights.map(fight => fight.bossName ?? "unknown").join("\n"),
+                inline: true
+            },
+            {name: "**TRIES**", value: raidData.fights.map(fight => fight.tries).join("\n"), inline: true},
+            {name: "**KILL**", value: raidData.fights.map(getEmbedValueStringForFight).join("\n"), inline: true}
+        )
+
+        let attendeesArray = sliceIntoChunks(raidData.attendees.sort((a,b) => b.id - a.id), 5);
+
+        embed.addFields(
+            {
+                name: "Attendees",
+                value: attendeesArray[0]
+                    .map(dps =>
+                        getIconForClass(dps.subType)
+                        + " "
+                        + dps.name).join("\n"),
+                inline: false
+            }
+        );
+
+        if(attendeesArray.length > 1){
+            for(let i = 1; i < attendeesArray.length; i++){
+                embed.addFields(
+                    {
+                        name: "Attendees " + (i + 1), value: attendeesArray[i]
+                            .map(dps =>
+                                getIconForClass(dps.subType)
+                                + " "
+                                + dps.name).join("\n"), inline: false
+                    });
+            }
+        }
+
+        //Add Links to helpful websites
+        embed.addFields({name: "Useful links", value: "https://www.warcraftlogs.com/reports/" + raidData.general.code + " \n"
+                + "https://www.wipefest.gg/report/" + raidData.general.code + " \n"
+                + "https://wowanalyzer.com/report/" + raidData.general.code + " \n", inline: false})
+
+        embed.addFields({name: "Remarks", value:" This log only shows reduced data, due to some missing information from warcraftlogs", inline: false})
+
+        return embed;
     }
 }

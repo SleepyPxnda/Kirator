@@ -3,6 +3,7 @@ const wlUtil = require("../warcraftlogs/warcraftlogsRequestUtil")
 const wlRaidParseUtil = require("../warcraftlogs/warcraftlogsRaidParseUtil");
 const wlMythicParseUtil = require("../warcraftlogs/warcraftlogsMythicPlusParseUtil")
 const discordUtil = require("../util/discordUtil")
+const {createEmbedFromRaidData} = require("../util/discordUtil");
 
 module.exports = {
     command: new SlashCommandBuilder()
@@ -48,11 +49,19 @@ module.exports = {
         } else {
             const data = await wlUtil.getDataForLog(wlCode, true)
 
-            const parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
+            let parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
+
+            if(parsedData instanceof Error){
+                parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJsonWithoutParses(data);
+                embed = discordUtil.createEmbedFromReducedRaidData(parsedData, difficulty);
+                await interaction.editReply({embeds: [embed]})
+                return;
+            }
 
             embed = discordUtil.createEmbedFromRaidData(parsedData, difficulty);
+            await interaction.editReply({embeds: [embed]})
+
         }
 
-        await interaction.editReply({embeds: [embed]})
     },
 };
