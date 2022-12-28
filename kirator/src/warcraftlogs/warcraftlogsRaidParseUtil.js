@@ -100,7 +100,6 @@ function getTankParseList(dpsParses, hpsParses){
 
     return tankList;
 }
-
 function getFightData(fights){
     let fightSummary = [];
 
@@ -136,12 +135,15 @@ module.exports = {
     parseWarcraftLogsResponseToJson(json) {
       let result = {
           general: {},
-          summary: {},
           parses: {},
           fights: {}
       };
 
       const report = json.data.reportData.report;
+
+      if(report.dpsParses.data.length === 0 || report.hpsParses.data.length === 0){
+          return new Error("No parse data found for report");
+      }
 
       //general information
       result.general.title = report.title;
@@ -163,5 +165,34 @@ module.exports = {
       })
 
       return result;
+    },
+    parseWarcraftLogsResponseToJsonWithoutParses(json){
+        let result = {
+            general: {},
+            fights: {},
+            attendees: {}
+        };
+
+        const report = json.data.reportData.report;
+
+        //general information
+        result.general.title = report.title;
+        result.general.duration = utils.getDurationFromUnix(report.startTime, report.endTime);
+        result.general.code = report.code;
+
+        //fights
+        result.fights = getFightData(report.fights);
+
+        result.attendees = report.masterData.actors;
+
+        //populate each element with the name of the encounter
+        result.fights.forEach(fight => {
+            const bossName = report.zone.encounters.find(encounter => encounter.id === fight.encounterID);
+            fight.bossName = bossName ? bossName.name : undefined;
+        })
+
+
+
+        return result;
     }
 }
