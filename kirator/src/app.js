@@ -10,7 +10,6 @@ const TOKEN = process.env.TOKEN;
     }
 })();
 
-
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 

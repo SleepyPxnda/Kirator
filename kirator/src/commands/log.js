@@ -3,7 +3,7 @@ const wlUtil = require("../warcraftlogs/warcraftlogsRequestUtil")
 const wlRaidParseUtil = require("../warcraftlogs/warcraftlogsRaidParseUtil");
 const wlMythicParseUtil = require("../warcraftlogs/warcraftlogsMythicPlusParseUtil")
 const discordUtil = require("../util/discordUtil")
-const {createEmbedFromRaidData} = require("../util/discordUtil");
+const logRequester = require("../warcraftlogs/LogRequester")
 
 module.exports = {
     command: new SlashCommandBuilder()
@@ -31,23 +31,25 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
-        const wlLink = interaction.options.getString("warcraft_logs_link")
-        const wlCode = wlLink.split("/")[4]
+        const wlLink = interaction.options.getString("warcraft_logs_link");
+        const wlCode = wlLink.split("/")[4];
 
         const difficulty = interaction.options.getString('difficulty');
 
-        const mode = interaction.options.getString("mode")
+        const mode = interaction.options.getString("mode");
+
+        const requester = new logRequester(wlCode);
 
         let embed;
 
         if(mode === "mode_dungeon") {
-            const data = await wlUtil.getDataForLog(wlCode, false);
+            const data = await requester.requestMPlusData();
 
             const parsedData = wlMythicParseUtil.parseWarcraftLogsResponseToJson(data);
 
             embed = discordUtil.createEmbedFromMythicPlusData(parsedData);
         } else {
-            const data = await wlUtil.getDataForLog(wlCode, true)
+            const data = await requester.requestRaidData();
 
             let parsedData = wlRaidParseUtil.parseWarcraftLogsResponseToJson(data);
 
